@@ -1,0 +1,73 @@
+import io
+import os
+import tempfile
+
+import imageio
+import rawpy
+from PIL import Image
+
+
+class ConvertService:
+    # set supported raw conversion extensions!
+    extensionsForRawConversion = ['.dng', '.raw', '.cr2', '.crw', '.erf', '.raf', '.tif', '.kdc', '.dcr', '.mos',
+                                  '.mef', '.nef', '.orf', '.rw2', '.pef', '.x3f', '.srw', '.srf', '.sr2', '.arw',
+                                  '.mdc',
+                                  '.mrw']
+
+    @staticmethod
+    def convert_to_extension(file, **kwargs):
+        try:
+            temp = io.BytesIO()
+            temp_file = None
+            image = None
+            if ConvertService.check_raw_extension(file.filename):
+                with rawpy.imread(file) as raw:
+                    rgb = raw.postprocess()
+                    temp_file = tempfile.NamedTemporaryFile(prefix="temp_img", suffix=".jpeg", delete=False)
+                    imageio.imwrite(temp_file.name, rgb)
+                    image = Image.open(temp_file)
+            else:
+                img = file.read()
+                image = Image.open(io.BytesIO(img))
+            if image is not None:
+                rgb_im = image.convert('RGB')
+                rgb_im = ConvertService.resize_img(rgb_im, kwargs.get('bW'), kwargs.get('height'),
+                                                   kwargs.get('absolute_resize'))
+                rgb_im.save(temp, kwargs.get('ext'), quality=kwargs.get('opt_percent'), optimize=kwargs.get('img_opt'))
+                return temp.getvalue()
+            else:
+                raise Exception('Reading the image has encountered an error')
+        finally:
+            if temp_file is not None:
+                temp_file.close()
+                os.unlink(temp_file.name)
+
+    @staticmethod
+    def check_raw_extension(extension):
+        for i in ConvertService.extensionsForRawConversion:
+            if extension.lower().endswith(i):
+                return True
+            else:
+                return False
+
+    @staticmethod
+    def resize_img(img, base_width, height, abs_resize):
+        # if not absolute resize return img: else convert
+        if not abs_resize and base_width > img.size[0] and base_width > img.size[1]:
+            return img
+        if height is not None:
+            return img.resize((int(base_width), int(height)), Image.ANTIALIAS)
+        else:
+            return img.resize(calculate_new_size_based_on_ration(base_width, img.size[0], img.size[1]),
+                              Image.ANTIALIAS)
+
+
+def calculate_new_size_based_on_ration(width, img_width, img_height):
+    if img_width >= img_height:
+        w_percent = (width / float(img_width))
+        mod_size = int((float(img_height)) * float(w_percent))
+        return width, mod_size
+    else:
+        w_percent = (width / float(img_height))
+        mod_size = int((float(img_width)) * float(w_percent))
+        return mod_size, width

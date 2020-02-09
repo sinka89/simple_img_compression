@@ -1,0 +1,72 @@
+summary: Convert image
+tags:
+  - Converter api
+description: This converts and resize the received image to the specified extension
+consumes:
+  - multipart/form-data
+produces:
+  - image/jpeg
+  - image/png
+  - application/json
+parameters:
+  - in: formData
+    name: file
+    type: file
+    description: The desired file to be converted (accepts lossless and lossy images)
+    required: true
+  - in: formData
+    name: extension
+    description: The desired extension to convert image into, (/api/allowed_extensions), default jpeg
+    required: false
+    schema:
+      type: string
+      example: jpeg
+  - in: formData
+    name: base_width
+    description: Accepts a base width in pixels to resize the image, if nothing provided 1200 (2MP img) will be used
+    required: false
+    schema:
+      type: integer
+      format: int64
+      example: 1200
+  - in: formData
+    name: opt_percent
+    description: The optimization scale from 1 to 95 (1 worst, 95 best)
+    required: false
+    minimum: 1
+    maximum: 100
+    schema:
+      type: integer
+      format: int
+      example: 85
+  - in: formData
+    name: img_optimize
+    description: Flag to optimize the image or not
+    required: false
+    schema:
+      type: boolean
+      format: boolean
+      example: true
+  - in: formData
+    name: img_height
+    description: Additional flag to set the image height. Will be ignored if abs_resize if false, else will fix resize the image without preserving aspect ratio
+    required: false
+    schema:
+      type: integer
+      format: int
+      example: 800
+  - in: formData
+    name: abs_resize
+    description: Flag for absolute resize if this is true, no matter the size of the uploaded image it will be resized to the specified dimensions | else the image will be resized only if it's resolution is > than the required resolution
+    required: false
+    schema:
+      type: boolean
+      format: boolean
+      example: false
+responses:
+  200:
+    description: The converted image response
+  500:
+    description: Internal server error
+  400:
+    description: Bad request

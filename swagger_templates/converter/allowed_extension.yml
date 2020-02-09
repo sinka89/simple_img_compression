@@ -1,0 +1,11 @@
+summary: Convert image accepted processing extensions
+tags:
+  - Converter api
+description: This returns the accepted values for the converted image process
+produces:
+  - application/json
+responses:
+  200:
+    description: The allowed image extensions
+  500:
+    description: Internal server error
