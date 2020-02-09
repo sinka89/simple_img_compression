@@ -1,3 +1,6 @@
+import logging
+import logging.config as log_conf
+
 from flasgger import Swagger, LazyJSONEncoder, LazyString
 from flask import Flask, jsonify, request
 from waitress import serve
@@ -47,7 +50,13 @@ def bad_request(e):
     return jsonify(error=str(e)), 400
 
 
-app.register_blueprint(get_convert_api_blueprint())
+def main():
+    log_conf.fileConfig(fname='logging.cfg', disable_existing_loggers=False)
+    app.register_blueprint(get_convert_api_blueprint())
+    logging.info(">>>> Starting api host on {0} with nr. of threads {1}...".format(
+        (WAITRESS_HOST + ':' + str(WAITRESS_PORT)), WAITRESS_THREADS))
+
 
 if __name__ == '__main__':
+    main()
     serve(app, host=WAITRESS_HOST, port=WAITRESS_PORT, threads=WAITRESS_THREADS)

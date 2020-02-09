@@ -1,10 +1,13 @@
 import io
+import logging
 import os
 import tempfile
 
 import imageio
 import rawpy
 from PIL import Image
+
+log = logging.getLogger(__name__)
 
 
 class ConvertService:
@@ -29,14 +32,13 @@ class ConvertService:
             else:
                 img = file.read()
                 image = Image.open(io.BytesIO(img))
-            if image is not None:
-                rgb_im = image.convert('RGB')
-                rgb_im = ConvertService.resize_img(rgb_im, kwargs.get('bW'), kwargs.get('height'),
-                                                   kwargs.get('absolute_resize'))
-                rgb_im.save(temp, kwargs.get('ext'), quality=kwargs.get('opt_percent'), optimize=kwargs.get('img_opt'))
-                return temp.getvalue()
-            else:
-                raise Exception('Reading the image has encountered an error')
+            rgb_im = image.convert('RGB')
+            rgb_im = ConvertService.resize_img(rgb_im, kwargs.get('bW'), kwargs.get('height'),
+                                               kwargs.get('absolute_resize'))
+            rgb_im.save(temp, kwargs.get('ext'), quality=kwargs.get('opt_percent'), optimize=kwargs.get('img_opt'))
+            return temp.getvalue()
+        except:
+            log.error('Error in converting file ', exc_info=True)
         finally:
             if temp_file is not None:
                 temp_file.close()
