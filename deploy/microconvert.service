@@ -1,0 +1,17 @@
+[Unit]
+Description=Start Image converting service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/simple_img_compression
+ExecStart=/opt/simple_img_compression/venv/bin/python3.7 /opt/simple_img_compression/app.py
+RemainAfterExit=no
+Restart=on-failure
+RestartSec=10s
+StartLimitInterval=400
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target

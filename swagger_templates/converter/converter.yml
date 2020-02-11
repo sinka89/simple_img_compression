@@ -54,7 +54,6 @@ parameters:
     schema:
       type: integer
       format: int
-      example: 800
   - in: formData
     name: abs_resize
     description: Flag for absolute resize if this is true, no matter the size of the uploaded image it will be resized to the specified dimensions | else the image will be resized only if it's resolution is > than the required resolution

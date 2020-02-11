@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request
 from waitress import serve
 
 from api.controller.convert_api_controller import get_convert_api_blueprint
+from api.util.converting_exception import ConvertingException
 from settings import *
 
 app = Flask(__name__)
@@ -50,7 +51,13 @@ def bad_request(e):
     return jsonify(error=str(e)), 400
 
 
+@app.errorhandler(ConvertingException)
+def convert_exception(e):
+    return jsonify(error=str(e)), 500
+
+
 def main():
+    create_log_dir_if_necessary()
     log_conf.fileConfig(fname='logging.cfg', disable_existing_loggers=False)
     app.register_blueprint(get_convert_api_blueprint())
     logging.info(">>>> Starting api host on {0} with nr. of threads {1}...".format(

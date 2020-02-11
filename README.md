@@ -19,3 +19,7 @@ Uses rawpy for raw image conversion & Pillow for lossy images, flasgger for Swag
 - activate venv (win \venv\Scripts\activate.bat | \venv\Scripts\activate)
 - pip install -r requirements.txt
 - python app.py
+
+For deploying in linux env past microconvert.service into /etc/systemd/system &
+run sudo systemctl daemon-reload &
+sudo systemctl start microconvert.service

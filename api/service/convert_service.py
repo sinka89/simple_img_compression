@@ -7,6 +7,8 @@ import imageio
 import rawpy
 from PIL import Image
 
+from api.util.converting_exception import ConvertingException
+
 log = logging.getLogger(__name__)
 
 
@@ -38,7 +40,10 @@ class ConvertService:
             rgb_im.save(temp, kwargs.get('ext'), quality=kwargs.get('opt_percent'), optimize=kwargs.get('img_opt'))
             return temp.getvalue()
         except:
-            log.error('Error in converting file ', exc_info=True)
+            msg = "Error converting file this could be caused by the fact that the file wasn't a valid image or the " \
+                  "server doesn't support the format uploaded "
+            log.error(msg, exc_info=True)
+            raise ConvertingException(msg)
         finally:
             if temp_file is not None:
                 temp_file.close()
