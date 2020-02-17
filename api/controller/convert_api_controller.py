@@ -59,11 +59,13 @@ def convert_img():
                 abort(400, err)
 
     if file is not None and extension is not None:
-        converted = ConvertService.convert_to_extension(file, ext=extension, bW=base_width, height=img_height,
+        enum_by_extension = get_enum_by_extension(extension)
+        converted = ConvertService.convert_to_extension(file, ext=enum_by_extension.value[2], bW=base_width,
+                                                        height=img_height,
                                                         opt_percent=img_opt_percent,
                                                         img_opt=img_optimize, absolute_resize=img_absolute_resize)
         response = make_response(converted, 200)
-        response.headers['Content-Type'] = get_enum_by_extension(extension).value[1]
+        response.headers['Content-Type'] = enum_by_extension.value[1]
         response.headers['Content-Disposition'] = 'attachment; filename=' + str(file.filename).rsplit('.', 1)[
             0] + '.' + extension
         return response

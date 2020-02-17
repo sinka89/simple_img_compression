@@ -5,8 +5,10 @@ extension_enum_dict_map = None
 
 @unique
 class AllowedExtension(Enum):
-    JPEG = ("jpeg", "image/jpeg")
-    PNG = ("png", "image/png")
+    JPEG = ("jpeg", "image/jpeg", "JPEG")
+    JPEG2000 = ("jp2", "image/jpeg", "JPEG2000")
+    PNG = ("png", "image/png", "PNG")
+    WEBP = ("webp", "image/webp", "WEBP")
 
     @staticmethod
     def get_supported_extension():

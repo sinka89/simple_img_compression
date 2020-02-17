@@ -7,6 +7,7 @@ import imageio
 import rawpy
 from PIL import Image
 
+from api.util.allowed_extension_and_mime_enum import AllowedExtension
 from api.util.converting_exception import ConvertingException
 
 log = logging.getLogger(__name__)
@@ -37,7 +38,10 @@ class ConvertService:
             rgb_im = image.convert('RGB')
             rgb_im = ConvertService.resize_img(rgb_im, kwargs.get('bW'), kwargs.get('height'),
                                                kwargs.get('absolute_resize'))
-            rgb_im.save(temp, kwargs.get('ext'), quality=kwargs.get('opt_percent'), optimize=kwargs.get('img_opt'))
+            if kwargs.get('ext') == AllowedExtension.JPEG2000.value[2]:
+                rgb_im.save(temp, kwargs.get('ext'), quality_mode='dB', quality_layers=[kwargs.get('opt_percent')])
+            else:
+                rgb_im.save(temp, kwargs.get('ext'), quality=kwargs.get('opt_percent'), optimize=kwargs.get('img_opt'))
             return temp.getvalue()
         except:
             msg = "Error converting file this could be caused by the fact that the file wasn't a valid image or the " \

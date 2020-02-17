@@ -31,14 +31,14 @@ parameters:
       example: 1200
   - in: formData
     name: opt_percent
-    description: The optimization scale from 1 to 95 (1 worst, 95 best)
+    description: The optimization scale from 1 to 95 (1 worst, 95 best). In case of using JPEG2000 this param will represent the signal to noise ratio value in decibels (If set to high the result image might be larger than the base img. >Restriction persists<)
     required: false
     minimum: 1
-    maximum: 100
+    maximum: 95
     schema:
       type: integer
       format: int
-      example: 85
+      example: 80
   - in: formData
     name: img_optimize
     description: Flag to optimize the image or not
@@ -49,7 +49,7 @@ parameters:
       example: true
   - in: formData
     name: img_height
-    description: Additional flag to set the image height. Will be ignored if abs_resize if false, else will fix resize the image without preserving aspect ratio
+    description: Additional flag to set the image height. Will be ignored if abs_resize is false, else will fix resize the image without preserving aspect ratio
     required: false
     schema:
       type: integer
