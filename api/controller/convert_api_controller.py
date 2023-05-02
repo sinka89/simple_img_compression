@@ -1,6 +1,5 @@
 import logging
 
-from flasgger import swag_from
 from flask import json, Response, request, make_response, Blueprint, abort
 
 from api.service.convert_service import ConvertService
@@ -17,13 +16,11 @@ CONVERT_API = Blueprint('blueprint', __name__, url_prefix='/api')
 
 
 @CONVERT_API.route("/allowed_extensions", methods=['GET'])
-@swag_from('/swagger_templates/converter/allowed_extension.yml')
 def get_allowed_extension():
     return Response(json.dumps(ALLOWED_EXTENSIONS), mimetype="application/json", status=200)
 
 
 @CONVERT_API.route('/convert', methods=['POST'])
-@swag_from('/swagger_templates/converter/converter.yml')
 def convert_img():
     file = None
     if 'file' in request.files:
